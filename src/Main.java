@@ -109,23 +109,30 @@ public class Main extends JFrame {
                         double y = (y0 + centerY - b.getHeight() / 2) / zoom + centerY;
 
                         Color c = null;
-                        int cR = 0;
-                        int cG = 0;
-                        int cB = 0;
+                        double cR = 0;
+                        double cG = 0;
+                        double cB = 0;
                         double e = 1 / zoom / antiAlias;
                         for (int dx = 0; dx < antiAlias; dx++) {
                             for (int dy = 0; dy < antiAlias; dy++) {
                                 int n = MandelbrotSet.test(new Complex(x + e * dx , y + e * dy), iterations);
                                 iterSum += n;
                                 c = getColor(n);
-                                cR += c.getRed();
-                                cG += c.getGreen();
-                                cB += c.getBlue();
+                                
+                                double goodR = c.getRed() / 255.;
+                                double goodG = c.getGreen() / 255.;
+                                double goodB = c.getBlue() / 255.;
+                                
+                                cR += goodR * goodR;
+                                cG += goodG * goodG;
+                                cB += goodB * goodB;
                             }
                         }
                         int d = antiAlias * antiAlias;
                         try {
-                            c = new Color(cR / d, cG / d, cB / d);
+                            c = new Color((int)(Math.sqrt(cR / d) * 255),
+                                          (int)(Math.sqrt(cG / d) * 255),
+                                          (int)(Math.sqrt(cB / d) * 255));
                         } catch (Exception ex) {}
                         b.setRGB(x0, y0, c.getRGB());
                     }
